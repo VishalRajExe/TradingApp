@@ -76,9 +76,6 @@ public class AuthController {
 		
 		Authentication auth = authenticate(username, password);
 
-		
-		
-		 
 		 
 		 SecurityContextHolder.getContext().setAuthentication(auth);
 		 
