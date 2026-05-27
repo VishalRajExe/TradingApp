@@ -2,6 +2,7 @@ package com.vishal.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,8 @@ import com.vishal.model.User;
 import com.vishal.repository.UserRepository;
 import com.vishal.response.AuthResponse;
 import com.vishal.services.CustomeUserDetailsService;
+import com.vishal.utils.OtpUtils;
+
 import org.springframework.security.authentication.BadCredentialsException;
 @RestController
 @RequestMapping("/auth")
@@ -28,6 +31,8 @@ public class AuthController {
 	
 	@Autowired
 	private CustomeUserDetailsService customUserDetails;
+	
+	
 	
 	@PostMapping("/signup")
 	public ResponseEntity<AuthResponse> register(@RequestBody User  user) throws Exception {
@@ -80,6 +85,15 @@ public class AuthController {
 		 SecurityContextHolder.getContext().setAuthentication(auth);
 		 
 		 String jwt = JwtProvider.generateToken(auth);
+		 
+		 if(user.getTwoFactorAuth().isEnabled()){
+				AuthResponse authResponse = new AuthResponse();
+				authResponse.setMessage("Two factor authentication enabled");
+				authResponse.setTwoFactorAuthEnabled(true);
+				
+				String otp= OtpUtils.generateOTP();
+		 }
+		 
 		 AuthResponse res = new AuthResponse();
 
 		 res.setJwt(jwt);
